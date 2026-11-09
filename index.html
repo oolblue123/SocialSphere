@@ -1,1 +1,363 @@
+<!DOCTYPE html>
 
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>SocialSphere</title>
+
+<style>
+
+*{box-sizing:border-box}
+
+body{margin:0;background:#fafafa;color:#171717;font-family:Arial,sans-serif}
+
+header{position:sticky;top:0;background:white;border-bottom:1px solid #ddd;padding:16px;display:flex;justify-content:space-between;align-items:center;z-index:2}
+
+.logo{font-size:25px;font-weight:bold;color:#7957df}
+
+button{cursor:pointer;border:0;background:none;font-size:20px}
+
+main{max-width:600px;margin:20px auto;padding:0 12px}
+
+.stories,.composer,.post,.inbox{background:white;border:1px solid #ddd;border-radius:12px;margin-bottom:16px;padding:15px}
+
+.stories{display:flex;justify-content:space-between;gap:8px;overflow:auto}
+
+.story{text-align:center;font-size:12px}
+
+.circle{width:53px;height:53px;border-radius:50%;background:linear-gradient(45deg,#ffb34c,#dc4290,#7957df);display:grid;place-items:center;color:white;font-size:24px;margin:auto auto 5px}
+
+.composer input{width:75%;padding:12px;border:0;outline:0}
+
+.primary{background:#7957df;color:white;padding:10px 16px;border-radius:8px;font-size:14px}
+
+.posthead{display:flex;align-items:center;gap:10px;font-weight:bold;margin-bottom:12px}
+
+.photo{height:320px;display:grid;place-items:center;text-align:center;color:white;font-size:35px;font-weight:bold;border-radius:5px;background:linear-gradient(135deg,#402b76,#d44d91,#f5aa68)}
+
+.photo.two{background:linear-gradient(135deg,#174b4b,#74a994,#d9b77c)}
+
+.photo.three{background:linear-gradient(135deg,#28345f,#7775bb,#e08d9c)}
+
+.actions{display:flex;gap:15px;margin-top:12px}
+
+.actions button{font-size:25px}
+
+.caption{font-size:14px}
+
+.muted{color:#888;font-size:13px}
+
+input,textarea{font:inherit}
+
+.inbox{display:none}
+
+.inbox.open{display:block}
+
+.chat{padding:12px;border-bottom:1px solid #eee;cursor:pointer}
+
+#conversation{display:none;margin-top:15px}
+
+#messages{height:180px;overflow:auto;background:#f5f3fa;padding:10px;border-radius:8px}
+
+#messages p{background:white;padding:8px;border-radius:8px}
+
+#msgInput{width:75%;padding:10px;border:1px solid #ddd;border-radius:8px}
+
+footer{text-align:center;color:#888;font-size:12px;padding:30px}
+
+@media(max-width:600px){.photo{height:300px}}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">SocialSphere</div>
+
+<div>
+
+<button onclick="location.reload()">⌂</button>
+
+<button onclick="document.getElementById('inbox').classList.toggle('open')">✉</button>
+
+<button onclick="document.getElementById('caption').focus()">＋</button>
+
+</div>
+
+</header>
+
+<main>
+
+<div class="stories">
+
+<div class="story"><div class="circle">＋</div>Your story</div>
+
+<div class="story"><div class="circle">🌅</div>Maya</div>
+
+<div class="story"><div class="circle">🏀</div>Jay</div>
+
+<div class="story"><div class="circle">🐈</div>Alex</div>
+
+<div class="story"><div class="circle">🎧</div>Ari</div>
+
+</div>
+
+<div class="inbox" id="inbox">
+
+<h2>Messages ✉</h2>
+
+<div class="chat" onclick="openChat('Maya')">🌅 Maya — Hey! How are you?</div>
+
+<div class="chat" onclick="openChat('Jay')">🏀 Jay — You playing later?</div>
+
+<div class="chat" onclick="openChat('Ari')">🎨 Ari — Check out my art!</div>
+
+<div id="conversation">
+
+<h3 id="chatName"></h3>
+
+<div id="messages"></div>
+
+<form onsubmit="sendMessage(event)">
+
+<input id="msgInput" placeholder="Write a message..." required>
+
+<button class="primary">Send</button>
+
+</form>
+
+</div>
+
+</div>
+
+<div class="composer">
+
+<h3>Share your moment</h3>
+
+<input id="caption" placeholder="What's happening in your sphere?">
+
+<button class="primary" onclick="createPost()">Post</button>
+
+</div>
+
+<div id="feed">
+
+<article class="post">
+
+<div class="posthead"><div class="circle">M</div>Maya · Brooklyn</div>
+
+<div class="photo">CHASING<br>SUNSETS ✨</div>
+
+<div class="actions">
+
+<button onclick="like(this)">♡</button>
+
+<button onclick="this.closest('.post').querySelector('input').focus()">▢</button>
+
+<button onclick="share()">➤</button>
+
+</div>
+
+<p><b>128 likes</b></p>
+
+<p class="caption"><b>maya.jpg</b> Golden hour is my favorite hour ☀️</p>
+
+<p class="muted">Comments</p>
+
+<form onsubmit="comment(event,this)">
+
+<input placeholder="Add a comment..." required>
+
+<button class="primary">Post</button>
+
+</form>
+
+</article>
+
+<article class="post">
+
+<div class="posthead"><div class="circle">J</div>Hooplife</div>
+
+<div class="photo two">GOOD DAYS<br>GOOD ENERGY 🏀</div>
+
+<div class="actions">
+
+<button onclick="like(this)">♡</button>
+
+<button onclick="this.closest('.post').querySelector('input').focus()">▢</button>
+
+<button onclick="share()">➤</button>
+
+</div>
+
+<p><b>86 likes</b></p>
+
+<p class="caption"><b>hooplife</b> Keep showing up for yourself.</p>
+
+<form onsubmit="comment(event,this)">
+
+<input placeholder="Add a comment..." required>
+
+<button class="primary">Post</button>
+
+</form>
+
+</article>
+
+<article class="post">
+
+<div class="posthead"><div class="circle">A</div>Art by Ari</div>
+
+<div class="photo three">MAKE YOUR<br>OWN MAGIC ✨</div>
+
+<div class="actions">
+
+<button onclick="like(this)">♡</button>
+
+<button onclick="this.closest('.post').querySelector('input').focus()">▢</button>
+
+<button onclick="share()">➤</button>
+
+</div>
+
+<p><b>204 likes</b></p>
+
+<p class="caption"><b>art.by.ari</b> Keep creating!</p>
+
+<form onsubmit="comment(event,this)">
+
+<input placeholder="Add a comment..." required>
+
+<button class="primary">Post</button>
+
+</form>
+
+</article>
+
+</div>
+
+</main>
+
+<footer>SocialSphere © 2026 · Share your world.</footer>
+
+<script>
+
+function like(b){
+
+b.textContent=b.textContent==='♡'?'♥':'♡';
+
+b.style.color=b.textContent==='♥'?'#e04470':'';
+
+}
+
+function comment(e,f){
+
+e.preventDefault();
+
+let p=document.createElement('p');
+
+p.textContent='You: '+f.querySelector('input').value;
+
+f.before(p);
+
+f.reset();
+
+}
+
+function share(){
+
+if(navigator.share)navigator.share({title:'SocialSphere',text:'Check out SocialSphere!'});
+
+else alert('Share SocialSphere with your friends!');
+
+}
+
+function createPost(){
+
+let input=document.getElementById('caption');
+
+if(!input.value.trim())return;
+
+let post=document.createElement('article');
+
+post.className='post';
+
+let head=document.createElement('p');
+
+head.innerHTML='<b>Your profile</b>';
+
+let text=document.createElement('p');
+
+text.textContent=input.value;
+
+post.append(head,text);
+
+document.getElementById('feed').prepend(post);
+
+input.value='';
+
+}
+
+let active='';
+
+let chats={Maya:["Maya: Hey! How are you?"],Jay:["Jay: You playing later?"],Ari:["Ari: Check out my art!"]};
+
+function openChat(name){
+
+active=name;
+
+document.getElementById('conversation').style.display='block';
+
+document.getElementById('chatName').textContent=name;
+
+render();
+
+}
+
+function render(){
+
+let box=document.getElementById('messages');
+
+box.innerHTML='';
+
+chats[active].forEach(m=>{
+
+let p=document.createElement('p');
+
+p.textContent=m;
+
+box.append(p);
+
+});
+
+box.scrollTop=box.scrollHeight;
+
+}
+
+function sendMessage(e){
+
+e.preventDefault();
+
+let input=document.getElementById('msgInput');
+
+chats[active].push('You: '+input.value);
+
+input.value='';
+
+render();
+
+}
+
+</script>
+
+</body>
+
+</html>
